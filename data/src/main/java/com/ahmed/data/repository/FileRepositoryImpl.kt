@@ -9,9 +9,11 @@ import io.reactivex.Single
 import javax.inject.Inject
 
 class FileRepositoryImpl @Inject constructor(private val localDataSource: LocalDataSource): FileRepository {
+
     override fun getFilesList(): Single<List<File>> {
         return localDataSource.getLocalFileList().map{
             it.mapToDomain()
         }
     }
+
 }

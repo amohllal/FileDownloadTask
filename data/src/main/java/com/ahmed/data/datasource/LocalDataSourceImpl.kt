@@ -5,6 +5,6 @@ import com.ahmed.data.model.FileResponse
 import io.reactivex.Single
 import javax.inject.Inject
 
-class LocalDataSourceImpl : LocalDataSource {
+class LocalDataSourceImpl @Inject constructor() : LocalDataSource {
     override fun getLocalFileList() = getFileList()
 }
