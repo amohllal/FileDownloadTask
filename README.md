@@ -1,4 +1,4 @@
-# Authors Demo
+# File Download
 Simple Android Application That Displays local JSON in recycler view and user can download the file.
 # Tech Stack
 - Clean Architecture with MVVM
