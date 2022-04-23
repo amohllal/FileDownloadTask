@@ -60,11 +60,13 @@ class FileRecyclerAdapter(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun handleFailedDownload(holder: FileRecyclerAdapter.ViewHolder) {
         holder.fileProgress.visibility = View.INVISIBLE
         holder.fileDownload.setTextColor(context.getColor(R.color.purple_700))
         holder.fileDownload.text = "Failed"
         holder.fileDownload.isClickable = false
+        holder.downloadPercentage.visibility = View.INVISIBLE
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -73,9 +75,11 @@ class FileRecyclerAdapter(
         holder.fileDownload.setTextColor(context.getColor(R.color.purple_500))
         holder.fileDownload.text = "Downloaded"
         holder.fileDownload.isClickable = false
+        holder.downloadPercentage.visibility = View.INVISIBLE
+
 
     }
-    fun initProgressLoading(file: File) {
+    fun setProgressLoading(file: File) {
         val selectedFile = selectFile(file)
         notifyItemChanged(fileList.indexOf(selectedFile), Bundle().apply {
             putInt("progressLoading", file.progressLoading)

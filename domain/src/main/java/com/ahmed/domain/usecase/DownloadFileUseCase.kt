@@ -5,5 +5,5 @@ import com.ahmed.domain.repository.FileRepository
 import javax.inject.Inject
 
 class DownloadFileUseCase @Inject constructor(private val fileRepository: FileRepository) {
-    fun downloadFile(file :File) = fileRepository.downloadingFile(file)
+    fun execute(file :File) = fileRepository.downloadingFile(file)
 }

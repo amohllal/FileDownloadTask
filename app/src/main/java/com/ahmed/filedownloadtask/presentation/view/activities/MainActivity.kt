@@ -1,5 +1,6 @@
 package com.ahmed.filedownloadtask.presentation.view.activities
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -36,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     private fun initRecyclerView() {
         fileRecyclerAdapter = FileRecyclerAdapter(fileList, {
             downloadFileWithProgress(it!!)
-            Log.d("TAG", "initRecyclerView: ${it.url}")
         }, this)
         file_rv.adapter = fileRecyclerAdapter
     }
@@ -44,14 +44,15 @@ class MainActivity : AppCompatActivity() {
     private fun downloadFileWithProgress(file : File){
         fileViewModel.downloadFile(file)
         fileViewModel.downloadingState.observe(this) {
-            fileRecyclerAdapter.initProgressLoading(it)
+            fileRecyclerAdapter.setProgressLoading(it)
         }
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun handleSuccessData(data: List<File>?) {
         hideLoading()
-        fileList.addAll(data!!)
+        fileList.addAll(data?:return)
         fileRecyclerAdapter.notifyDataSetChanged()
     }
 

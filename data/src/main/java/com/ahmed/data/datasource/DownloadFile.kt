@@ -1,9 +1,12 @@
 package com.ahmed.data.datasource
 
+import android.util.Log
 import com.ahmed.data.model.ProgressResponseBody
+import com.ahmed.domain.model.File
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.internal.format
 import java.io.IOException
 import javax.inject.Inject
 
@@ -12,10 +15,10 @@ class DownloadFile @Inject constructor() {
    lateinit var progressListener: ProgressListener
 
     @Throws(Exception::class)
-    operator fun invoke(fileUrl: String) {
+    operator fun invoke(file: File) {
         try {
             val request = Request.Builder()
-                .url(fileUrl)
+                .url(file.url)
                 .build()
 
             val client = OkHttpClient.Builder()
@@ -27,17 +30,16 @@ class DownloadFile @Inject constructor() {
                 .build()
 
             val response = client.newCall(request).execute()
-            if (!response.isSuccessful) throw IOException(" Unexpected  code $response")
-
+            if (!response.isSuccessful){
+                throw IOException(" Unexpected  code $response")
+            }
             response.body?.string()
 
         } catch (e: Exception) {
-             e.printStackTrace();
+            progressListener.failure(-1)
+            e.printStackTrace()
         }
     }
 
-    interface ProgressListener {
-         fun update(bytesRead: Long, contentLength: Long, done: Boolean)
-    }
 
 }

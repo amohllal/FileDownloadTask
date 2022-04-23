@@ -1,6 +1,7 @@
 package com.ahmed.filedownloadtask.presentation.viewmodel
 
 import android.util.AndroidException
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.ahmed.domain.model.File
 import com.ahmed.domain.usecase.DownloadFileUseCase
@@ -29,7 +30,7 @@ class FileViewModel @Inject constructor(
 
     fun getFileList() {
         compositeDisposable.add(
-            getFileListUseCase.getFileList()
+            getFileListUseCase.execute()
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe {
                     fileListLiveData.postLoading()
@@ -45,13 +46,15 @@ class FileViewModel @Inject constructor(
 
     fun downloadFile(request : File){
         compositeDisposable.add(
-            downloadFileUseCase.downloadFile(request)
+            downloadFileUseCase.execute(request)
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe { downloadingState.postValue(request) }
                 .observeOn(mainScheduler)
-                .subscribe { response ->
+                .subscribe ({ response ->
                     downloadingState.postValue(response)
-                }
+                },{error ->
+                    Log.d("TAG", "Error: $error")
+                })
         )
     }
 

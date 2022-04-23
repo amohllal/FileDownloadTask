@@ -1,5 +1,6 @@
 package com.ahmed.data.datasource
 
+import android.util.Log
 import com.ahmed.data.mapper.getFileList
 import com.ahmed.domain.model.File
 import io.reactivex.Observable
@@ -13,22 +14,12 @@ class LocalDataSourceImpl @Inject constructor(private val downloadFile: Download
 
     override fun downloadingFile(file: File): Observable<File> {
         return Observable.create {
-          val listener  = object : DownloadFile.ProgressListener {
-                var firstUpdate = true
+            downloadFile.progressListener = object : ProgressListener {
                 override fun update(bytesRead: Long, contentLength: Long, done: Boolean) {
                     if (done) {
                         it.onNext(file)
                         it.onComplete()
-                        println("completed")
                     } else {
-                        if (firstUpdate) {
-                            firstUpdate = false
-                            if (contentLength == -1L) {
-                                println("content-length: unknown")
-                            } else {
-                                System.out.format("content-length: %d\n", contentLength)
-                            }
-                        }
                         if (contentLength == -1L) {
                             file.progressLoading = -1
                         } else {
@@ -37,12 +28,15 @@ class LocalDataSourceImpl @Inject constructor(private val downloadFile: Download
                         }
                         file.isLoading = done.not()
                         it.onNext(file)
-
                     }
                 }
+
+                override fun failure(contentLength: Long) {
+                    file.progressLoading = -1
+                    it.onNext(file)
+                }
             }
-            downloadFile.progressListener = listener
-            downloadFile.invoke(file.url)
+            downloadFile.invoke(file)
         }
     }
 }
