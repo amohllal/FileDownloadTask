@@ -7,5 +7,5 @@ import io.reactivex.Single
 interface FileRepository {
     fun getFilesList() : Single<List<File>>
 
-    fun downloadingFile(file: File)  : Single<File>
+    fun downloadingFile(file: File)  : Observable<File>
 }

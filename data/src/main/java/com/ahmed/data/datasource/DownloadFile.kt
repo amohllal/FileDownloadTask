@@ -22,17 +22,14 @@ class DownloadFile @Inject constructor() {
                 .addNetworkInterceptor { chain: Interceptor.Chain ->
                     val originalResponse = chain.proceed(chain.request())
                     originalResponse.newBuilder()
-                        .body(originalResponse.body?.let { ProgressResponseBody(
-                                it,
-                                progressListener
-                            )
-                        })
+                        .body(ProgressResponseBody(originalResponse.body!!, progressListener))
                         .build() }
                 .build()
 
             val response = client.newCall(request).execute()
             if (!response.isSuccessful) throw IOException(" Unexpected  code $response")
-            print(response.body.toString())
+
+            response.body?.string()
 
         } catch (e: Exception) {
              e.printStackTrace();

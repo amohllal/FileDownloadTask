@@ -5,6 +5,7 @@ import com.ahmed.data.datasource.LocalDataSourceImpl
 import com.ahmed.data.mapper.mapToDomain
 import com.ahmed.domain.model.File
 import com.ahmed.domain.repository.FileRepository
+import io.reactivex.Observable
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -16,7 +17,7 @@ class FileRepositoryImpl @Inject constructor(private val localDataSource: LocalD
         }
     }
 
-    override fun downloadingFile(file: File): Single<File> {
+    override fun downloadingFile(file: File): Observable<File> {
         return localDataSource.downloadingFile(file)
     }
 

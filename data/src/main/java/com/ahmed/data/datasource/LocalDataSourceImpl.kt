@@ -2,20 +2,23 @@ package com.ahmed.data.datasource
 
 import com.ahmed.data.mapper.getFileList
 import com.ahmed.domain.model.File
+import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.internal.operators.observable.ObservableCreate
 import javax.inject.Inject
 
 class LocalDataSourceImpl @Inject constructor(private val downloadFile: DownloadFile) :
     LocalDataSource {
     override fun getLocalFileList() = getFileList()
 
-    override fun downloadingFile(file: File): Single<File> {
-        return Single.create { singleEmitter ->
-            downloadFile.progressListener = object : DownloadFile.ProgressListener {
+    override fun downloadingFile(file: File): Observable<File> {
+        return Observable.create {
+          val listener  = object : DownloadFile.ProgressListener {
                 var firstUpdate = true
                 override fun update(bytesRead: Long, contentLength: Long, done: Boolean) {
                     if (done) {
-                        singleEmitter.onSuccess(file)
+                        it.onNext(file)
+                        it.onComplete()
                         println("completed")
                     } else {
                         if (firstUpdate) {
@@ -33,11 +36,12 @@ class LocalDataSourceImpl @Inject constructor(private val downloadFile: Download
                             file.progressLoading = progress.toInt()
                         }
                         file.isLoading = done.not()
-                        singleEmitter.onSuccess(file)
+                        it.onNext(file)
 
                     }
                 }
             }
+            downloadFile.progressListener = listener
             downloadFile.invoke(file.url)
         }
     }

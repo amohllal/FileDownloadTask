@@ -9,6 +9,6 @@ import io.reactivex.Single
 interface LocalDataSource {
     fun getLocalFileList() : Single<List<FileResponse>>
 
-    fun downloadingFile(file: File)  : Single<File>
+    fun downloadingFile(file: File)  : Observable<File>
 
 }

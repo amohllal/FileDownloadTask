@@ -35,9 +35,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         fileRecyclerAdapter = FileRecyclerAdapter(fileList, {
-
+            downloadFileWithProgress(it!!)
+            Log.d("TAG", "initRecyclerView: ${it.url}")
         }, this)
         file_rv.adapter = fileRecyclerAdapter
+    }
+
+    private fun downloadFileWithProgress(file : File){
+        fileViewModel.downloadFile(file)
+        fileViewModel.downloadingState.observe(this) {
+            fileRecyclerAdapter.initProgressLoading(it)
+        }
+
     }
 
     private fun handleSuccessData(data: List<File>?) {
