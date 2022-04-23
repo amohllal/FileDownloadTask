@@ -16,4 +16,8 @@ class FileRepositoryImpl @Inject constructor(private val localDataSource: LocalD
         }
     }
 
+    override fun downloadingFile(file: File): Single<File> {
+        return localDataSource.downloadingFile(file)
+    }
+
 }
